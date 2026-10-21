@@ -1,3 +1,4 @@
+import re
 import sys
 import anthropic
 from search import search
@@ -25,7 +26,13 @@ def ask(question, document_id):
 
     # response can include thinking blocks, keep only the text
     answer = "".join(b.text for b in response.content if b.type == "text")
-    pages = sorted({r["page"] for r in results})
+
+    # only pages claude actually cited, e.g. [p. 1] or [p. 1, 2]
+    pages = sorted({
+        int(n)
+        for group in re.findall(r"\[p\.\s*([\d,\s]+)\]", answer)
+        for n in re.findall(r"\d+", group)
+    })
     return {"answer": answer, "pages": pages}
 
 
