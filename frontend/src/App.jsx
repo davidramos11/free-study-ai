@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { listDocuments, uploadPdf } from './api'
+import Chat from './Chat'
 
 function App() {
   const [documents, setDocuments] = useState([])
@@ -80,6 +81,7 @@ function App() {
             </ul>
           )}
         </section>
+                {selected && <Chat documentId={selected} />}
       </main>
     </div>
   )
