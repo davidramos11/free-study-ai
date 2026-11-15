@@ -1,5 +1,4 @@
-# the main file !!!! :)
-
+import os
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -10,10 +9,14 @@ from flashcards import make_flashcards
 
 app = FastAPI(title="free study ai")
 
-# let the react dev server call the api
+# local dev plus the deployed frontend, set FRONTEND_URL in production
+origins = ["http://localhost:5173"]
+if os.getenv("FRONTEND_URL"):
+    origins.append(os.getenv("FRONTEND_URL"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

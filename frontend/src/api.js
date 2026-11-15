@@ -1,4 +1,5 @@
-const API = 'http://127.0.0.1:8000'
+// set VITE_API_URL in production, falls back to local backend
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
 
 // throws with the backend's error message if the request fails
 async function request(path, options) {
