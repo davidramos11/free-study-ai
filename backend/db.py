@@ -32,7 +32,7 @@ def init_db():
                 document_id INT REFERENCES documents(id) ON DELETE CASCADE,
                 page INT NOT NULL,
                 content TEXT NOT NULL,
-                embedding vector(384)
+                embedding vector(1024)
             )
         """)
 

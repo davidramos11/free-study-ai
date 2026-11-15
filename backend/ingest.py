@@ -2,10 +2,8 @@ import io
 import os
 import sys
 from pypdf import PdfReader
-from sentence_transformers import SentenceTransformer
 from db import get_conn
-
-model = SentenceTransformer("all-MiniLM-L6-v2")
+from embeddings import embed_documents
 
 CHUNK_WORDS = 200
 OVERLAP_WORDS = 40
@@ -41,7 +39,7 @@ def ingest_pdf(file_bytes, filename):
     if not rows:
         raise ValueError("no text found in pdf")
 
-    embeddings = model.encode([content for _, content in rows])
+    embeddings = embed_documents([content for _, content in rows])
 
     with get_conn() as conn:
         doc_id = conn.execute(
@@ -63,4 +61,3 @@ if __name__ == "__main__":
     with open(path, "rb") as f:
         doc_id, count = ingest_pdf(f.read(), os.path.basename(path))
     print(f"document {doc_id}: {count} chunks")
-    

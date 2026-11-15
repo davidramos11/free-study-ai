@@ -1,10 +1,10 @@
 import sys
 from db import get_conn
-from ingest import model
+from embeddings import embed_query
 
 
 def search(query, document_id, k=5):
-    query_emb = model.encode(query)
+    query_emb = embed_query(query)
     with get_conn() as conn:
         rows = conn.execute(
             """
