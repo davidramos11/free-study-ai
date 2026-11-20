@@ -50,55 +50,51 @@ export default function Flashcards({ documentId }) {
   const card = cards[index]
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white">
-      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-        <h2 className="font-semibold">Flashcards</h2>
+    <div className="space-y-4 p-5">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm text-stone-400">
+          {cards.length ? `Card ${index + 1} of ${cards.length}` : 'Turn this document into 10 flashcards.'}
+        </p>
         <button
           onClick={generate}
           disabled={loading}
-          className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-gold-soft disabled:opacity-60"
         >
           {loading ? 'Generating…' : cards.length ? 'Regenerate' : 'Generate'}
         </button>
       </div>
 
-      <div className="p-4">
-        {error && <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+      {error && <p className="rounded-lg bg-red-950/60 p-3 text-sm text-red-300">{error}</p>}
 
-        {!card ? (
-          <p className="text-sm text-slate-500">
-            {loading ? 'Writing your cards, this takes a few seconds…' : 'Generate 10 flashcards from this document.'}
-          </p>
-        ) : (
-          <>
-            <button
-              onClick={() => setFlipped((f) => !f)}
-              className="flex min-h-48 w-full flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 p-6 text-center transition hover:border-blue-300"
-            >
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                {flipped ? 'Answer' : 'Question'}
-              </p>
-              <div className="text-lg">
-                <MathText>{flipped ? card.answer : card.question}</MathText>
-              </div>
-              {flipped && <p className="mt-3 text-xs text-slate-500">p. {card.page}</p>}
-              {!flipped && <p className="mt-3 text-xs text-slate-400">Click to flip</p>}
-            </button>
-
-            <div className="mt-3 flex items-center justify-between text-sm">
-              <button onClick={() => go(-1)} className="rounded-lg px-3 py-1.5 hover:bg-slate-100">
-                ← Prev
-              </button>
-              <span className="text-slate-500">
-                {index + 1} / {cards.length}
-              </span>
-              <button onClick={() => go(1)} className="rounded-lg px-3 py-1.5 hover:bg-slate-100">
-                Next →
-              </button>
+      {!card ? (
+        <div className="flex min-h-56 items-center justify-center rounded-xl border border-dashed border-stone-700 text-sm text-stone-500">
+          {loading ? <span className="animate-pulse">Writing your cards…</span> : 'Your cards will show up here.'}
+        </div>
+      ) : (
+        <>
+          <button
+            onClick={() => setFlipped((f) => !f)}
+            className="flex min-h-56 w-full flex-col items-center justify-center rounded-xl border border-stone-800 bg-stone-950 p-8 text-center transition hover:border-gold/50"
+          >
+            <p className={`mb-3 text-xs font-semibold uppercase tracking-[0.2em] ${flipped ? 'text-cal' : 'text-gold'}`}>
+              {flipped ? 'Answer' : 'Question'}
+            </p>
+            <div className="font-display text-xl leading-snug">
+              <MathText>{flipped ? card.answer : card.question}</MathText>
             </div>
-          </>
-        )}
-      </div>
-    </section>
+            <p className="mt-4 text-xs text-stone-500">{flipped ? `From page ${card.page}` : 'Click to flip'}</p>
+          </button>
+
+          <div className="flex items-center justify-between text-sm">
+            <button onClick={() => go(-1)} className="rounded-lg px-3 py-1.5 text-stone-300 transition hover:bg-stone-800">
+              ← Prev
+            </button>
+            <button onClick={() => go(1)} className="rounded-lg px-3 py-1.5 text-stone-300 transition hover:bg-stone-800">
+              Next →
+            </button>
+          </div>
+        </>
+      )}
+    </div>
   )
 }

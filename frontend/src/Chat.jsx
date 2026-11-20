@@ -5,6 +5,8 @@ import rehypeKatex from 'rehype-katex'
 import 'katex/dist/katex.min.css'
 import { askQuestion } from './api'
 
+const SUGGESTIONS = ['What are the key definitions?', 'Summarize the main ideas', 'Give me an example problem']
+
 export default function Chat({ documentId }) {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
@@ -15,9 +17,8 @@ export default function Chat({ documentId }) {
     setMessages([])
   }, [documentId])
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    const question = input.trim()
+  async function send(text) {
+    const question = text.trim()
     if (!question || loading) return
 
     setInput('')
@@ -34,26 +35,35 @@ export default function Chat({ documentId }) {
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white">
-      <div className="border-b border-slate-200 px-4 py-3">
-        <h2 className="font-semibold">Ask about this document</h2>
-      </div>
-
-      <div className="space-y-4 p-4">
+    <div>
+      <div className="min-h-72 space-y-4 p-5">
         {messages.length === 0 && (
-          <p className="text-sm text-slate-500">Try “what are the key definitions?”</p>
+          <div>
+            <p className="text-sm text-stone-400">Ask anything about this document. Try one of these:</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => send(s)}
+                  className="rounded-full border border-stone-700 px-3 py-1.5 text-sm text-stone-300 transition hover:border-gold/60 hover:text-gold"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
 
         {messages.map((m, i) => (
           <div key={i} className={m.role === 'user' ? 'flex justify-end' : 'flex'}>
             {m.role === 'user' && (
-              <div className="max-w-[85%] rounded-lg bg-blue-600 px-3 py-2 text-sm text-white">{m.text}</div>
+              <div className="max-w-[85%] rounded-xl border border-cal/40 bg-cal-deep px-4 py-2 text-sm">{m.text}</div>
             )}
             {m.role === 'error' && (
-              <div className="max-w-[85%] rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{m.text}</div>
+              <div className="max-w-[85%] rounded-xl bg-red-950/60 px-4 py-2 text-sm text-red-300">{m.text}</div>
             )}
             {m.role === 'assistant' && (
-              <div className="max-w-[85%] rounded-lg bg-slate-100 px-3 py-2 text-sm">
+              <div className="max-w-[85%] rounded-xl border border-stone-700/60 bg-stone-800/70 px-4 py-3 text-sm leading-relaxed">
                 {/* tailwind strips list styles, so add them back */}
                 <div className="space-y-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-semibold">
                   <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
@@ -61,7 +71,7 @@ export default function Chat({ documentId }) {
                   </ReactMarkdown>
                 </div>
                 {m.pages?.length > 0 && (
-                  <p className="mt-2 text-xs text-slate-500">
+                  <p className="mt-3 border-t border-stone-700/60 pt-2 text-xs text-gold/80">
                     Sources: {m.pages.map((p) => `p. ${p}`).join(', ')}
                   </p>
                 )}
@@ -70,23 +80,29 @@ export default function Chat({ documentId }) {
           </div>
         ))}
 
-        {loading && <p className="text-sm text-slate-500">Thinking…</p>}
+        {loading && <p className="animate-pulse text-sm text-stone-500">Reading your notes…</p>}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 border-t border-slate-200 p-3">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          send(input)
+        }}
+        className="flex gap-2 border-t border-stone-800 p-4"
+      >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask a question…"
-          className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          className="flex-1 rounded-lg border border-stone-700 bg-stone-950 px-3 py-2 text-sm text-stone-100 placeholder-stone-500 outline-none transition focus:border-gold/70"
         />
         <button
           disabled={loading || !input.trim()}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-gold-soft disabled:opacity-50"
         >
           Ask
         </button>
       </form>
-    </section>
+    </div>
   )
 }
