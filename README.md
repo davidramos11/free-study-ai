@@ -4,6 +4,7 @@ Upload your lecture notes, ask questions about them, and get answers with page c
 
 **[Try it live →](https://free-study-ai.vercel.app)**
 
+Note: this is a shared demo. Uploaded documents are visible to all visitors, so don't upload anything personal.
 
 ## Features
 
